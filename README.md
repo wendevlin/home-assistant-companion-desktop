@@ -18,6 +18,16 @@ A fast, lightweight, cross-platform desktop application for Home Assistant built
 
 - [Bun](https://bun.sh) installed on your system
 
+**Linux (Arch/Manjaro) additional dependencies:**
+```bash
+sudo pacman -S --needed base-devel cmake gtk3 webkit2gtk-4.1
+```
+
+**Linux (Ubuntu/Debian) additional dependencies:**
+```bash
+sudo apt install build-essential cmake pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
+```
+
 ### Installation
 
 1. Clone the repository:
