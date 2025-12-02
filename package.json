@@ -1,0 +1,21 @@
+{
+  "name": "ha-desktop",
+  "version": "1.0.0",
+  "description": "A cross-platform Home Assistant desktop app built with Electrobun",
+  "scripts": {
+    "dev": "electrobun dev",
+    "build": "electrobun build",
+    "start": "bun run build && bun run dev",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "electrobun": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@biomejs/biome": "latest"
+  }
+}
