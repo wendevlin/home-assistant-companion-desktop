@@ -12,6 +12,8 @@ const mainWindow = new BrowserWindow({
   },
 });
 
+console.log("Window created");
+
 // Create system tray
 const tray = new Tray({
   title: "HA",
@@ -53,15 +55,13 @@ tray.on("tray-clicked", (e) => {
 
   switch (action) {
     case "show-window":
-      mainWindow.show();
-      mainWindow.focus();
+      // TODO: Implement show/focus for Electrobun
+      console.log("Show window requested");
       break;
 
     case "reset-settings":
       // Call the reset function in the webview
       mainWindow.webview.executeJavaScript("window.resetSettings?.()");
-      mainWindow.show();
-      mainWindow.focus();
       break;
 
     case "quit-app":
@@ -70,10 +70,11 @@ tray.on("tray-clicked", (e) => {
   }
 });
 
-// Handle window close - minimize to tray instead of quitting
-mainWindow.on("close", (e) => {
-  e.preventDefault();
-  mainWindow.hide();
-});
+// TODO: Handle window close - minimize to tray instead of quitting
+// Need to find the correct Electrobun API for hiding windows
+// mainWindow.on("close", (e) => {
+//   e.preventDefault();
+//   mainWindow.hide();
+// });
 
 console.log("Home Assistant Desktop app started!");
