@@ -8,7 +8,7 @@ A fast, lightweight, cross-platform desktop application for Home Assistant built
 - **💾 Persistent Storage**: Your Home Assistant server URL is saved locally with persistent webview storage
 - **🎨 Clean UI**: Simple settings page for initial configuration
 - **🔒 Secure**: Uses system's native webview (WebKit on macOS, Edge WebView2 on Windows, WebKitGTK on Linux)
-- **📟 System Tray**: Minimize to system tray, with options to show window, reset settings, or quit
+- **🌊 Wayland Support**: Works natively on modern Linux desktops (GNOME, KDE, etc.)
 - **🌐 Cross-Platform**: Works on macOS, Windows, and Linux
 - **📦 Tiny Bundle**: ~12MB app size using system webview
 
@@ -57,12 +57,10 @@ bun run build
 
 ## Usage
 
-1. **First Launch**: Enter your Home Assistant server URL (e.g., `https://homeassistant.local:8123`)
+1. **First Launch**: Enter your Home Assistant server URL (e.g., `http://localhost:8123` or `https://homeassistant.local:8123`)
 2. **Main View**: The app displays your Home Assistant interface in a webview
-3. **System Tray**: Close the window to minimize to system tray
-   - Click "Show Home Assistant" to restore the window
-   - Click "Reset Settings" to change your server URL
-   - Click "Quit" to exit the application completely
+3. **Settings**: Your server URL is automatically saved and will be remembered on next launch
+4. **Close Window**: Close the window to quit the application
 
 ## Storage & Security
 
@@ -120,6 +118,19 @@ Electrobun offers several advantages over Electron:
 - **Native Performance**: System webview instead of bundled Chromium
 - **Simple Architecture**: Clean separation between main process and UI
 - **Modern Stack**: Built for TypeScript from the ground up
+
+## Known Limitations
+
+### Linux-Specific
+- **System Tray**: System tray functionality is not currently available on Linux (Electrobun limitation)
+- **Window Management**: Window minimize/hide/show APIs are not yet implemented in Electrobun v0.1.12
+- **Application Menu**: Application menus are not supported on Linux - UI-based menus should be implemented in the webview instead
+
+### Wayland
+- **X11 Warnings**: You may see `X11 Error: GLXBadWindow` warnings in the console - these are harmless and don't affect functionality
+- The app works correctly on Wayland despite these warnings
+
+**Note**: Electrobun is in early development (v0.1.12). Many features are still being implemented. Check the [Electrobun roadmap](https://github.com/blackboardsh/electrobun/issues/2) for upcoming features.
 
 ## License
 
