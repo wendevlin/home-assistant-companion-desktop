@@ -1,22 +1,18 @@
-import { invoke } from "@tauri-apps/api/core";
+// Import WebAwesome styles - this will be processed by Vite and resolve all @imports
+import "@home-assistant/webawesome/dist/styles/webawesome.css";
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
-
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
+// Apply theme based on OS preference
+function applyTheme() {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.classList.toggle("wa-dark", prefersDark);
+  document.documentElement.classList.toggle("wa-light", !prefersDark);
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
+// Apply initial theme
+applyTheme();
+
+// Listen for OS theme changes
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+
+// Import main app component
+import "./components/ha-app.js";
