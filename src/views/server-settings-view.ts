@@ -528,7 +528,11 @@ export class ServerSettingsView extends LitElement {
       return `${value}${sensor.unit}`;
     }
     if (sensor.sensor_type === "binary_sensor") {
-      return value === "on" ? "Yes" : "No";
+      return value === true || value === "on" ? "Yes" : "No";
+    }
+    // Capitalize first letter for string states like "charging" -> "Charging"
+    if (typeof value === "string" && sensor.id === "battery_state") {
+      return value.charAt(0).toUpperCase() + value.slice(1).replace("_", " ");
     }
     return String(value);
   }

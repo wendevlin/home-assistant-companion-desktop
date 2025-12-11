@@ -204,9 +204,9 @@ async fn run_sensor_loop(
 
     let mut fast_timer = tokio::time::interval(fast_interval);
 
-    // Sensors that need slower updates
+    // Sensors that need slower updates (constantly changing or resource-intensive)
     let slow_sensors: std::collections::HashSet<&str> =
-        ["cpu_usage", "memory_usage", "memory_free"]
+        ["cpu_usage", "memory_usage", "memory_free", "uptime"]
             .iter()
             .cloned()
             .collect();
@@ -292,8 +292,13 @@ async fn run_sensor_loop(
             .into_iter()
             .filter(|r| {
                 let value_str = format!("{:?}", r.state);
-                let changed = last_fast_values.get(&r.id) != Some(&value_str);
+                let prev_value = last_fast_values.get(&r.id);
+                let changed = prev_value != Some(&value_str);
                 if changed {
+                    println!(
+                        "HA Desktop: Sensor {} changed: {:?} -> {}",
+                        r.id, prev_value, value_str
+                    );
                     last_fast_values.insert(r.id.clone(), value_str);
                 }
                 changed
@@ -309,6 +314,11 @@ async fn run_sensor_loop(
         if changed_readings.is_empty() {
             continue;
         }
+
+        println!(
+            "HA Desktop: Sending {} sensor updates to HA",
+            changed_readings.len()
+        );
 
         // Send to Home Assistant
         if let Err(e) = api::update_sensors(

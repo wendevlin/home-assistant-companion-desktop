@@ -30,6 +30,7 @@ pub fn get_monitoring_config(
 }
 
 /// Disables device monitoring for a server.
+/// This clears the webhook_id so re-enabling will trigger a fresh registration.
 #[tauri::command]
 pub fn disable_device_monitoring(
     state: State<'_, AppState>,
@@ -37,6 +38,9 @@ pub fn disable_device_monitoring(
 ) -> Result<(), String> {
     if let Some(mut config) = state.get_monitoring_config(&server_id) {
         config.enabled = false;
+        config.webhook_id = None; // Clear webhook so re-enabling triggers fresh registration
+        config.cloudhook_url = None;
+        config.remote_ui_url = None;
         state.update_monitoring_config(&server_id, config);
         state.save()?;
     }

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "Bash(bun tauri:*)"
+      "Bash(bun tauri:*)",
+      "Bash(cargo build:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.home-assistant.io)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

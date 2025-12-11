@@ -183,6 +183,13 @@ pub async fn update_sensors(
         data: sensor_data,
     };
 
+    // Log what we're sending
+    println!(
+        "HA Desktop: Sending sensor update to {}: {}",
+        url,
+        serde_json::to_string(&request).unwrap_or_default()
+    );
+
     let response = client
         .post(&url)
         .header("Content-Type", "application/json")
@@ -196,14 +203,17 @@ pub async fn update_sensors(
         return Err("Integration removed from Home Assistant".to_string());
     }
 
-    if !response.status().is_success() {
-        let status = response.status();
-        let body = response.text().await.unwrap_or_default();
+    let status = response.status();
+    let body = response.text().await.unwrap_or_default();
+
+    if !status.is_success() {
         return Err(format!(
             "Sensor update failed with status {}: {}",
             status, body
         ));
     }
+
+    println!("HA Desktop: Sensor update response: {} - {}", status, body);
 
     Ok(())
 }
