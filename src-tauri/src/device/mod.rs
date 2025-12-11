@@ -94,8 +94,22 @@ fn get_manufacturer() -> String {
 
 #[cfg(target_os = "windows")]
 fn get_manufacturer() -> String {
-    // Could use WMI here for more accurate info
-    "Unknown".to_string()
+    // Use WMIC to get system manufacturer
+    use std::process::Command;
+
+    Command::new("wmic")
+        .args(["computersystem", "get", "manufacturer", "/value"])
+        .output()
+        .ok()
+        .and_then(|output| {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            stdout
+                .lines()
+                .find(|line| line.starts_with("Manufacturer="))
+                .map(|line| line.trim_start_matches("Manufacturer=").trim().to_string())
+                .filter(|s| !s.is_empty())
+        })
+        .unwrap_or_else(|| "Unknown".to_string())
 }
 
 #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
@@ -119,7 +133,22 @@ fn get_model() -> String {
 
 #[cfg(target_os = "windows")]
 fn get_model() -> String {
-    "Desktop".to_string()
+    // Use WMIC to get system model
+    use std::process::Command;
+
+    Command::new("wmic")
+        .args(["computersystem", "get", "model", "/value"])
+        .output()
+        .ok()
+        .and_then(|output| {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            stdout
+                .lines()
+                .find(|line| line.starts_with("Model="))
+                .map(|line| line.trim_start_matches("Model=").trim().to_string())
+                .filter(|s| !s.is_empty())
+        })
+        .unwrap_or_else(|| "Desktop".to_string())
 }
 
 #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]

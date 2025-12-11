@@ -28,7 +28,6 @@ keyring = { version = "3.6.3", features = ["sync-secret-service", "apple-native"
 aes-gcm = "0.10"
 base64 = "0.21"
 rand = "0.8"
-gtk = "0.18.2"
 mdns-sd = "0.11"
 tokio = { version = "1", features = ["rt-multi-thread", "time", "sync", "macros"] }
 urlencoding = "2.1"
@@ -42,3 +41,5 @@ tokio-tungstenite = { version = "0.28.0", features = ["native-tls"] }
 futures-util = "0.3.31"
 notify-rust = "4.11.7"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18.2"

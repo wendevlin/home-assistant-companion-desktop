@@ -286,8 +286,9 @@ async fn run_notification_loop(
 
 /// Display a system notification.
 ///
-/// Uses notify-send command directly as it's more reliable across different
-/// desktop environments and doesn't get suppressed when the app is "focused".
+/// Uses platform-specific notification methods:
+/// - Linux: notify-send command (more reliable) with notify-rust fallback
+/// - Windows/macOS: notify-rust crate (uses native notification APIs)
 fn show_notification(event: &NotificationEvent) {
     let title = event
         .title
@@ -304,33 +305,50 @@ fn show_notification(event: &NotificationEvent) {
         event.message.clone()
     };
 
-    // Use notify-send directly - more reliable and doesn't get suppressed
-    use std::process::Command;
+    #[cfg(target_os = "linux")]
+    {
+        // On Linux, use notify-send directly - more reliable and doesn't get suppressed
+        use std::process::Command;
 
-    let result = Command::new("notify-send")
-        .arg("--app-name=Home Assistant")
-        .arg("--icon=home-assistant")
-        .arg("--urgency=normal")
-        .arg(title)
-        .arg(&body)
-        .spawn();
+        let result = Command::new("notify-send")
+            .arg("--app-name=Home Assistant")
+            .arg("--icon=home-assistant")
+            .arg("--urgency=normal")
+            .arg(title)
+            .arg(&body)
+            .spawn();
 
-    match result {
+        match result {
+            Ok(_) => {
+                println!("HA Desktop: Notification sent: {} - {}", title, body);
+            }
+            Err(e) => {
+                println!("HA Desktop: notify-send failed: {}, trying notify-rust", e);
+                show_notification_rust(title, &body);
+            }
+        }
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    {
+        // On Windows and macOS, use notify-rust which uses native APIs
+        show_notification_rust(title, &body);
+    }
+}
+
+/// Display notification using notify-rust crate (cross-platform fallback).
+fn show_notification_rust(title: &str, body: &str) {
+    match Notification::new()
+        .summary(title)
+        .body(body)
+        .appname("Home Assistant")
+        .show()
+    {
         Ok(_) => {
             println!("HA Desktop: Notification sent: {} - {}", title, body);
         }
         Err(e) => {
             println!("HA Desktop: Failed to send notification: {}", e);
-            // Try notify-rust as fallback
-            if let Err(e2) = Notification::new()
-                .summary(title)
-                .body(&body)
-                .appname("Home Assistant")
-                .icon("dialog-information")
-                .show()
-            {
-                println!("HA Desktop: notify-rust fallback also failed: {}", e2);
-            }
         }
     }
 }
